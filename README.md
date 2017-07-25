@@ -1,4 +1,4 @@
-# Products table. 
+# Products table
 
 ## Functional
 You can:
