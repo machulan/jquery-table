@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <!--<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />-->
+    <title>EPAM jQUERY TABLE</title>
+    <!--include bootstrap-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!--include jQuery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!--custom style-->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="container">
+
+        <!--<div class=" hidden row" style="margin-top: 20px;">
+            <div class="col-sm-6 col-sm-offset-0">
+                <div class="">
+                    <form role="search" method="get" class="search-form">
+                        <label class="sr-only">Search</label>
+                        <div class="input-group full-width">
+                            <input type="search" name="s" class="search-field form-control" placeholder="Фильтр по подстроке в имени товара">
+                            <span class="input-group-btn">
+                                <button type="submit" class="search-submit btn">Искать</button>
+                            </span>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <button class="btn  pull-right">Add new</button>
+            </div>
+        </div>-->
+
+        <!--++++-->
+        <!--<div class="row hidden" style="margin-top: 20px;">
+            <div class="col-md-4">
+                <input type="search" class="form-control" placeholder="Фильтр по подстроке в имени товара">
+            </div>
+            <div class="col-md-8">
+                <button class="btn pull-left">Искать</button>
+                <button class="btn  pull-right">Add new</button>
+            </div>
+        </div>-->
+        <!--++++-->
+
+        <!--<form action="" class="hidden form-inline border-marker" style="margin-top: 20px;">
+            <div class="row">
+                <div class="form-group border-marker col-sm-5">
+                    <label class="sr-only col-sm-0" for="search">Search</label>
+                    <input type="search" class="form-control col-sm-12" style="width: 70%" placeholder="Фильтр по подстроке в имени товара">
+                    <button type="submit" class="btn" style="margin-left:5px;">Искать</button>
+                </div>
+
+                <div class="col-sm-7">
+                    <button type="button" class="btn pull-right">Add new</button>
+                </div>
+            </div>
+        </form>-->
+
+        <!--<form action="" class="form-inline border-marker row hidden" style="margin-top: 20px;">
+            <div class="col-md-4 border-marker">
+                <div class="form-group border-marker">
+                    <label class="sr-only col-sm-0" for="search">Search</label>
+                    <input type="search" class="form-control" placeholder="Фильтр по подстроке в имени товара">
+                </div>
+
+            </div>
+            <div class="col-md-8">
+                <button type="submit" class="btn pull-left" style="">Искать</button>
+                <button type="button" class="btn pull-right">Add new</button>
+            </div>
+        </form>-->
+
+        <!--++++ input <= id="search" -->
+        <form action="" class="form-inline border-marker" style="margin-top: 20px;">
+            <div class="form-group search-form-group border-marker" style="">
+                <label class="sr-only col-sm-0" for="search">Search</label>
+                <!--style="width: 300px"-->
+                <input id="search" type="search" class="form-control" placeholder="Фильтр по подстроке в имени товара">
+            </div>
+            <button type="submit" class="btn" id="search-button">Искать</button>
+            <button type="button" class="btn pull-right" id="add-new-button">Add new</button>
+        </form>
+        <!--++++-->
+
+        <table class="table table-bordered text-center" style="margin-top: 20px;">
+            <tr>
+                <th>
+                    <!--Name-->
+                    <!--+++++++++++++++++++++++++++-->
+                    <div style="display: table-cell; width: 100%; text-align:center; vertical-align:middle;">Name</div>
+                    <div style="display: table-cell;">
+                        <span style="font-size: 2.3em;">&#9661;</span>
+                    </div>
+                    <!--+++++++++++++++++++++++++++-->
+                    <!--&#9661; &#8420;   transform: rotate(180deg)  -->
+
+                    <!--<div style="display: table-cell; width: 100%; text-align:center; vertical-align:middle;">Name</div>
+                    <div style="display: table-cell;"><button><span style="font-size: 2em;">&#8420;</span></button></div>-->
+                </th>
+                <th>
+                    <!--Price-->
+                    <div style="display: table-cell; width: 100%; text-align:center; vertical-align:middle;">Price</div>
+                    <div style="display: table-cell;">
+                        <span style="font-size: 2.3em;">&#9661;</span>
+                    </div>
+                </th>
+                <th>Actions</th>
+            </tr>
+            <!--<tr>
+                <td><a href="#" class="text-info">Товар 1</a><span class="badge">5</span></td>
+                <td>12000</td>
+                <td>
+                    <button id="edit-button" class="btn btn-default">Edit </button>
+                    <button id="delete-button" class="btn">Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td><a href="#" class="text-info">Товар 2</a><span class="badge">5</span></td>
+                <td>999</td>
+                <td class="row">
+                    <div class="col-xs-6">
+                        <button class="btn btn-default">Edit</button>
+                    </div>
+                    <div class="col-xs-6">
+                        <button class="btn btn-default">Delete</button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td><a href="#" class="text-info">Товар 3</a><span class="badge">5</span></td>
+                <td>$12,352.25</td>
+                <td>
+                    <div class="row">
+                        <div class="col-md-2 col-md-offset-4 col-xs-3 col-xs-offset-3">
+                            <button class="btn btn-default">Edit</button>
+                        </div>
+                        <div class="col-md-2 col-xs-3">
+                            <button class="btn btn-default">Delete</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>-->
+        </table>
+
+        <div id="delete-modal" class="delete-modal">
+            <div class="delete-modal-content text-center">
+                <!--<h2>Are you sure?</h2>-->
+                <!--<h2>Вы уверены?</h2>-->
+                <!--<span style=""><b>Вы действительно хотите<br>удалить "Товар 2"?</b></span>-->
+                <h4 style="">Вы действительно хотите<br>удалить "Товар 2"?</h4>
+                <hr>
+                <!--<p>Вы действительно хотите удалить "<span>Товар 2</span>"?</p>-->
+                <!--<p>Are you sure you want to perform this action?</p>-->
+                <div class="row">
+                    <div class="col-sm-6">
+                        <button id="yes-button" class="btn btn-danger">Да</button>
+                    </div>
+                    <div class="col-sm-6">
+                        <button id="no-button" class="btn btn-success">Нет</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="edit-modal" class="edit-modal">
+            <div class="edit-modal-content">
+                <!--<div class="row">
+                    <button type="button" class=" btn btn-default close" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>-->
+                <div class="row" style="margin: auto; margin-bottom: -15px;">
+                    <button id="close-button" type="button" class="btn btn-danger pull-right" style="padding: 0 20px 0 20px;" aria-label="Close">
+                        <span aria-hidden="true" style="font-size:20px;"><b>&times;</b></span>
+                    </button>
+                </div>
+
+                <form action="" id="add-update-form">
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <div class="row">
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" id="name">
+                            </div>
+                            <div class="col-sm-4" style="">
+                                <!--delete padding-left: 0;-->
+                                <div style="display: table; height: 2.5em">
+                                    <span class="help-block" id="name-help-block" style="display: table-cell; vertical-align: middle;">&#9679; Required field</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="supplier-email">Supplier email:</label>
+
+                        <div class="row">
+                            <div class="col-sm-7">
+                                <input type="email" class="form-control" id="supplier-email" aria-describedby="email-help-text">
+                            </div>
+                            <div class="col-sm-4">
+                                <!--<span class="help-block" id="supplier-email-help-block">&#9679; Incorrect email</span>-->
+                                <div style="display: table; height: 2.5em">
+                                    <span class="help-block" id="supplier-email-help-block" style="display: table-cell; vertical-align: middle;">&#9679; Incorrect email</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="count">Count:</label>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="count">
+                                <!--type="number"-->
+                            </div>
+                            <div class="col-sm-7">
+                                <span class="help-block" id="count-help-block">&#9679; Несоответствие формату e-mail</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="price">Price:</label>
+                        <div class="row">
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" id="price">
+                            </div>
+                        </div>
+                    </div>
+
+                    <label for="delivery">Delivery:</label>
+
+                    <div class="form-group row border-marker" id="delivery">
+
+                        <div class="col-sm-4 border-marker">
+                            <select class="form-control" id="delivery-type-select">
+                                <option value=""></option>
+                                <option value="country">Страна</option>
+                                <option value="city">Город</option>
+                            </select>
+                        </div>
+
+                        <!--<div class="splitter"></div>-->
+
+                        <!--<hr>-->
+                        <div class="col-sm-8 border-left-marker" style="padding: 0px;">
+
+                            <div class="col-sm-6 border-marker">
+                                <div class="col-sm-12 form-group-border" id="delivery-country-radio-group">
+                                    <div class="radio">
+                                        <label><input type="radio" name="country" value="Россия" checked>Россия</label>
+                                    </div>
+                                    <div class="radio">
+                                        <label><input type="radio" name="country" value="США">США</label>
+                                    </div>
+                                    <div class="radio">
+                                        <label><input type="radio" name="country" value="Япония">Япония</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!--<div class="splitter"></div>-->
+
+                            <div class="col-sm-6 border-left-marker">
+                                <div class="col-sm-12 form-group-border" id="delivery-city-checkbox-group">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="city" value="Select All" id="select-all-checkbox">Select All</label>
+                                    </div>
+                                    <hr>
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="city" value="Саратов">Саратов</label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="city" value="Москва">Москва</label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="city" value="Санкт-Петербург">Санкт-Петербург</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </form>
+
+                <button type="submit" class="btn btn-success" id="add-update-button">Update</button>
+
+            </div>
+        </div>
+
+
+    </div>
+
+    <script type="text/javascript" src="js/helpers.js"></script>
+    <script type="text/javascript" src="js/products.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+</body>
+
+</html>
