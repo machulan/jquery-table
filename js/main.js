@@ -1,10 +1,7 @@
 ﻿$(document).ready(function() {
-    // invisible hidden
-    // $(body).children.off();
 
     // 'NO' button click handler
     $('#no-button').click(function() {
-        // $('#delete-modal').css('display', 'none');
         $("html,body").css("overflow", "auto");
 
         $('#delete-modal').hide();
@@ -13,8 +10,6 @@
     // closes modal
     $('#close-button').click(function() {
         $("html,body").css("overflow", "auto"); // TODO
-
-        // $("html,body").css('margin-right', '0px');
 
         $('#edit-modal').css('display', 'none');
         enableEditModal();
@@ -66,11 +61,6 @@
 
     // checks string on the email format and returns {valid, error-message}
     function emailValidation(email) {
-        // if (email == '') {
-        //     return {
-        //         valid: true
-        //     }
-        // }
         return {
             valid: validateEmail(email),
             message: SUPPLIER_EMAIL_HELP_TEXT
@@ -91,27 +81,12 @@
 
     // checks string on the US currency format
     function validateFormattedPrice(formattedPrice) {
-        // if (formattedPrice == '') {
-        //     return true;
-        // }
-        // $12,345,678.98
-        // /(([0-9]){1,2})/;
-        // /(([0-9]){1,2}\,)(([0-9]){3}\,)*(([0-9]){3})/;
-        // /(([0-9]){1,2})|((([0-9]){1,2}\,)(([0-9]){3}\,)*(([0-9]){3}))/;
-
         var leftPartWithoutCommas = '([0-9]){1,2}';
         var leftPartWithCommas = '(([0-9]){1,2}\\,)(([0-9]){3}\\,)*(([0-9]){3})';
         var leftPart = '(' + leftPartWithoutCommas + '|' + leftPartWithCommas + ')';
         var rightPart = '(\\.([0-9]){1,2})?';
         var regexp = '^\\$' + leftPart + rightPart + '$';
         return formattedPrice == '' || new RegExp(regexp).test(formattedPrice);
-        // return (new RegExp('^\$' + leftPartWithoutCommas + rightPart + '$').test(formattedPrice)) ||
-        //     (new RegExp('^\$' + leftPartWithCommas + rightPart + '$').test(formattedPrice));
-
-        // return /^\$([0-9]){1,2}(\.([0-9]){1,2})?$/.test(formattedPrice);
-
-        // var re = /^\$  (([0-9]){1,2}\,)?(([0-9]){3}\,)*  (\.([0-9]){1,2})?$/;
-        // return re.test(formattedPrice);
     }
 
     // adds validation to edit-modal inputs
@@ -122,8 +97,6 @@
         var firstNameFocus = true;
         $('#name').off();
         $('#name').focus(function() {
-            // alert('#name focused');
-            // console.log('#supplier-email focused');
             if (firstNameFocus) {
                 firstNameFocus = !firstNameFocus;
                 return;
@@ -131,7 +104,6 @@
 
             var validation = nameValidation($(this).val());
             if (!validation.valid) {
-                // console.log('highlighting');
                 $(this).addClass('input-highlighting');
                 $('#name-help-block').text(BLACK_CIRCLE + ' ' + validation.message);
             } else {
@@ -142,12 +114,8 @@
         // on blur
 
         $('#name').blur(function() {
-            // alert('#name blurred');
-            // console.log('#supplier-email blurred');
-
             var validation = nameValidation($(this).val());
             if (!validation.valid) {
-                // console.log('highlighting');
                 $(this).addClass('input-highlighting');
                 $('#name-help-block').text(BLACK_CIRCLE + ' ' + validation.message);
             } else {
@@ -161,8 +129,6 @@
         var firstSupplierEmailFocus = true;
         $('#supplier-email').off();
         $('#supplier-email').focus(function() {
-            // alert('#name focused');
-            // console.log('#supplier-email focused');
             if (firstSupplierEmailFocus) {
                 firstSupplierEmailFocus = !firstSupplierEmailFocus;
                 return;
@@ -170,7 +136,6 @@
 
             var validation = emailValidation($(this).val());
             if (!validation.valid) {
-                // console.log('highlighting');
                 $(this).addClass('input-highlighting');
                 $('#supplier-email-help-block').text(BLACK_CIRCLE + ' ' + validation.message);
             } else {
@@ -180,12 +145,8 @@
         });
         // on blur
         $('#supplier-email').blur(function() {
-            // alert('#name blurred');
-            // console.log('#supplier-email blurred');
-
             var validation = emailValidation($(this).val());
             if (!validation.valid) {
-                // console.log('highlighting');
                 $(this).addClass('input-highlighting');
                 $('#supplier-email-help-block').text(BLACK_CIRCLE + ' ' + validation.message);
             } else {
@@ -198,41 +159,22 @@
         $('#count').off();
         // prevent paste
         $('#count').on('paste', function(e) {
-            // e.preventDefault();
-            // e.which
-            // $(this).val(e.type + ' ' + e.value);
             var pasteData = e.originalEvent.clipboardData.getData('Text');
-            // if (!validateCount(pasteData)) {
-            //     return false;
-            // }
             return validateCount(pasteData);
         });
-
-        // $('#count').on('input', function() {
-        //     $(this).val($(this).val().replace(/\D/, ''));
-        // });
 
         $('#count').keypress(function(e) {
             var e = e || window.event;
             var keyCode = e.keyCode || e.which;
             var key = String.fromCharCode(keyCode);
-            // if (!validateCount(key)) { // /\d/
-            //     // e.preventDefault();
-            //     return false;
-            // }
+
             return validateCount(key);
         });
 
         // price validation
         $('#price').off();
-        // $('#price').on('input', function() {
-        //     $(this).val($(this).val().replace(/[^0-9\.]/, ''));
-        // });
         $('#price').on('paste', function(e) {
             var pasteData = e.originalEvent.clipboardData.getData('Text');
-            // if (!validatePrice(pasteData)) {
-            //     return false;
-            // }
             return validatePrice(pasteData);
         });
 
@@ -240,10 +182,6 @@
             var e = e || window.event;
             var keyCode = e.keyCode || e.which;
             var key = String.fromCharCode(keyCode);
-            // if (!validatePrice(key)) { // !/\d|\./.test(key)
-            //     // e.preventDefault();
-            //     return false;
-            // }
             return validatePrice(key);
             // TODO add isNaN on input.val()???
         });
@@ -253,23 +191,15 @@
             if (price) {
                 // delete all commas and dollar sign
                 $(this).val(getUnformattedPrice(price));
-                // price.replace(/\,|\$/g, '')
             }
-
-            console.log('caret position: ', $(this).selectionStart);
-            // TODO add vertical lines in edit form
-            // TODO delete shift when opening modal // LOOK AT myinstaspace.ru
+            // console.log('caret position: ', $(this).selectionStart);
         });
         $('#price').blur(function() {
             var price = $(this).val();
             if (!price) {
-                // $(this).val('$0');
                 return;
             }
             $(this).val(getFormattedPrice($(this).val()));
-            // var parts = $(this).val().split('.');
-            // var mainPart = '$' + reverseString(reverseString(parts[0]).match(/.{1,3}/g).join(','));
-            // $(this).val(mainPart + (parts[1] ? '.' + parts[1].substr(0, 2) : ''));
         });
     }
 
@@ -287,17 +217,8 @@
 
     // add-new-product-button click handler
     $('#add-new-button').click(function() {
-        // console.log('add-new-button pressed');
 
         $("html,body").css("overflow", "hidden");
-        // $("body").css("margin-right", "20px");
-        // $("html,body").css("overflow-y", "scroll");
-        // $("html,body").css({
-        //     "overflow": "hidden",
-        //     "margin": "0",
-        //     "height": "100%"
-        // });
-        // $("html").css('margin-right', '0px');
 
         // clearing form
         clearForm();
@@ -343,10 +264,6 @@
                 $('#edit-modal').css('display', 'none'); // hide()
             } else {
                 // no valid
-                // var validation = nameValidation($('#name').val());
-                // if (!validation.valid) {
-                //     $('#name').focus();
-                // }
                 if (!validateEmail($('#supplier-email').val())) {
                     $('#supplier-email').focus().blur().focus();
                 }
@@ -405,8 +322,6 @@
     // search by name
     $('#search-button').click(function(e) {
         e.preventDefault();
-        // console.log('search button pressed');
-        // alert('search button pressed');
 
         var filterString = $('input[id="search"]').last().val().toLowerCase();
 
@@ -473,14 +388,7 @@
 
         // add rows to table body
         setTableRows(trs);
-        // trs.forEach(function(tr) {
-        //     $('tbody').append(tr.data);
-        //     // addEventsTo(ps[tr.id]);
-        // });
 
-        // change sorting order sign &#9661 == '\u25BD'; ++ &#8420; == \u20E4 ++  &#9651; == \u25B3     \u20E4 \u2206  \u25B3   '&#x25B3;'
-        // fromCodePoint(194564)  String.fromCharCode('25B3')  String.fromCharCode(8420)
-        // var sign = (ascendingOrderOfSortingByName) ? '\u25BD' : '\u20E4';
         $('tr>th:nth-child(1)').children().last().toggleClass('rotate180deg');
 
         // change sorting order
@@ -517,10 +425,7 @@
 
         // add rows to table body
         setTableRows(trs);
-        // trs.forEach(function(tr) {
-        //     $('tbody').append(tr.data);
-        //     // addEventsTo(ps[tr.id]);
-        // });
+
         $('tr>th:nth-child(2)').children().last().toggleClass('rotate180deg');
 
         // change sorting order
@@ -529,7 +434,6 @@
 
     // adds new product into products and table; adds event handlers to rows
     function addIntoTable(product) {
-        // window.products.push(product);
         window.products[product.id] = product;
         addRowIntoTable(product);
         addEventsTo(product);
@@ -576,7 +480,7 @@
 
             // add event handler
             $('#yes-button').click(function() {
-                //deleting from tbody
+                // deleting from tbody
                 // $('tr:has(button[id="delete-button-' + id + '"])').remove();
                 $('tr[id="tr-' + product.id + '"]').remove();
 
@@ -593,7 +497,6 @@
             $("html,body").css("overflow", "hidden");
 
             // reseting form
-            // document.getElementById('add-update-form').reset();
             clearForm();
 
             $('#add-update-button').text('Update');
@@ -676,10 +579,6 @@
                     $('#edit-modal').css('display', 'none');
                 } else {
                     // no valid
-                    // var validation = nameValidation($('#name').val());
-                    // if (!validation.valid) {
-                    //     $('#name').focus();
-                    // }
                     if (!validateEmail($('#supplier-email').val())) {
                         $('#supplier-email').focus().blur().focus();
                     }
@@ -697,7 +596,6 @@
 
         $('#tr-' + product.id + ' a').click(function() {
             // reseting form
-            // document.getElementById('add-update-form').reset();
             clearForm();
 
             $('#add-update-button').text('OK');
@@ -776,8 +674,6 @@
 
     // clears table and adds each product of window.products into table
     function showAllProducts() {
-        // console.log('showing all products');
-        // alert('showing all products');
         clearTable();
 
         for (var id in window.products) {
@@ -790,3 +686,8 @@
     // table initialization
     showAllProducts();
 });
+
+// TODO fix caret position changing in price input (and maybe in count input)
+// TODO delete shift when opening modal // LOOK AT myinstaspace.ru
+
+// sorting order signs &#9661 == '\u25BD'; ++ &#8420; == \u20E4 ++  &#9651; == \u25B3    \u20E4 \u2206 \u25B3 &#x25B3;
