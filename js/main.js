@@ -81,8 +81,8 @@
 
     // checks string on the US currency format
     function validateFormattedPrice(formattedPrice) {
-        var leftPartWithoutCommas = '([0-9]){1,2}';
-        var leftPartWithCommas = '(([0-9]){1,2}\\,)(([0-9]){3}\\,)*(([0-9]){3})';
+        var leftPartWithoutCommas = '([0-9]){1,3}';
+        var leftPartWithCommas = '(([0-9]){1,3}\\,)(([0-9]){3}\\,)*(([0-9]){3})';
         var leftPart = '(' + leftPartWithoutCommas + '|' + leftPartWithCommas + ')';
         var rightPart = '(\\.([0-9]){1,2})?';
         var regexp = '^\\$' + leftPart + rightPart + '$';
@@ -168,6 +168,11 @@
             var keyCode = e.keyCode || e.which;
             var key = String.fromCharCode(keyCode);
 
+            // for firefox
+            if (keyCode == 8) {
+                return true;
+            }
+
             return validateCount(key);
         });
 
@@ -182,6 +187,12 @@
             var e = e || window.event;
             var keyCode = e.keyCode || e.which;
             var key = String.fromCharCode(keyCode);
+
+            // for firefox
+            if (keyCode == 8) {
+                return true;
+            }
+
             return validatePrice(key);
             // TODO add isNaN on input.val()???
         });
