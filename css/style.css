@@ -1,9 +1,3 @@
-body>div {
-    /*width: 100%;
-    min-width: 960px;*/
-    /*overflow: visible;*/
-}
-
 .delete-modal {
     display: none;
     /* Hidden by default */
@@ -30,7 +24,6 @@ body>div {
     margin: 16% auto;
     padding: 20px;
     border: 1px solid #888;
-    /*border-radius: 20px;*/
     border-radius: 10px;
     width: 20%;
 }
@@ -62,7 +55,6 @@ body>div {
     margin: 2% auto;
     padding: 20px;
     border: 1px solid #888;
-    /*width: 40%;*/
     width: 40%;
     border-radius: 10px;
 }
@@ -122,6 +114,9 @@ a {
 .border-marker {
     /*border: 1px solid blue;*/
 }
+
+
+/* TEMP */
 
 .input-group.full-width .input-group-btn:last-child>.btn {
     margin-left: 5px;

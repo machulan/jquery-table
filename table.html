@@ -77,6 +77,8 @@
         </form>-->
 
         <!--++++ input <= id="search" -->
+
+        <!--Search string-->
         <form action="" class="form-inline border-marker" style="margin-top: 20px;">
             <div class="form-group search-form-group border-marker" style="">
                 <label class="sr-only col-sm-0" for="search">Search</label>
@@ -86,8 +88,8 @@
             <button type="submit" class="btn" id="search-button">Искать</button>
             <button type="button" class="btn pull-right" id="add-new-button">Add new</button>
         </form>
-        <!--++++-->
 
+        <!--Table-->
         <table class="table table-bordered text-center" style="margin-top: 20px;">
             <tr>
                 <th>
@@ -148,6 +150,7 @@
             </tr>-->
         </table>
 
+        <!--Delete modal dialog-->
         <div id="delete-modal" class="delete-modal">
             <div class="delete-modal-content text-center">
                 <!--<h2>Are you sure?</h2>-->
@@ -168,6 +171,7 @@
             </div>
         </div>
 
+        <!--Add/Edit modal dialog-->
         <div id="edit-modal" class="edit-modal">
             <div class="edit-modal-content">
                 <!--<div class="row">
@@ -175,20 +179,25 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>-->
+
+                <!--Close button-->
                 <div class="row" style="margin: auto; margin-bottom: -15px;">
                     <button id="close-button" type="button" class="btn btn-danger pull-right" style="padding: 0 20px 0 20px;" aria-label="Close">
                         <span aria-hidden="true" style="font-size:20px;"><b>&times;</b></span>
                     </button>
                 </div>
 
+                <!--Form-->
                 <form action="" id="add-update-form">
+
+                    <!--Name input-->
                     <div class="form-group">
                         <label for="name">Name:</label>
                         <div class="row">
                             <div class="col-sm-7">
                                 <input type="text" class="form-control" id="name">
                             </div>
-                            <div class="col-sm-4" style="">
+                            <div class="col-sm-4">
                                 <!--delete padding-left: 0;-->
                                 <div style="display: table; height: 2.5em">
                                     <span class="help-block" id="name-help-block" style="display: table-cell; vertical-align: middle;">&#9679; Required field</span>
@@ -197,6 +206,7 @@
                         </div>
                     </div>
 
+                    <!--Supplier email input-->
                     <div class="form-group">
                         <label for="supplier-email">Supplier email:</label>
 
@@ -214,6 +224,7 @@
                         </div>
                     </div>
 
+                    <!--Count input-->
                     <div class="form-group">
                         <label for="count">Count:</label>
                         <div class="row">
@@ -227,6 +238,7 @@
                         </div>
                     </div>
 
+                    <!--Price input-->
                     <div class="form-group">
                         <label for="price">Price:</label>
                         <div class="row">
@@ -236,10 +248,12 @@
                         </div>
                     </div>
 
+                    <!--Delivery input-->
                     <label for="delivery">Delivery:</label>
 
                     <div class="form-group row border-marker" id="delivery">
 
+                        <!--Delivery option-->
                         <div class="col-sm-4 border-marker">
                             <select class="form-control" id="delivery-type-select">
                                 <option value=""></option>
@@ -248,11 +262,9 @@
                             </select>
                         </div>
 
-                        <!--<div class="splitter"></div>-->
-
-                        <!--<hr>-->
                         <div class="col-sm-8 border-left-marker" style="padding: 0px;">
 
+                            <!--Country radio group-->
                             <div class="col-sm-6 border-marker">
                                 <div class="col-sm-12 form-group-border" id="delivery-country-radio-group">
                                     <div class="radio">
@@ -267,8 +279,7 @@
                                 </div>
                             </div>
 
-                            <!--<div class="splitter"></div>-->
-
+                            <!--City checkbox group-->
                             <div class="col-sm-6 border-left-marker">
                                 <div class="col-sm-12 form-group-border" id="delivery-city-checkbox-group">
                                     <div class="checkbox">
@@ -292,6 +303,7 @@
 
                 </form>
 
+                <!--Add/Update button-->
                 <button type="submit" class="btn btn-success" id="add-update-button">Update</button>
 
             </div>

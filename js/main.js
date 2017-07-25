@@ -2,6 +2,7 @@
     // invisible hidden
     // $(body).children.off();
 
+    // 'NO' button click handler
     $('#no-button').click(function() {
         // $('#delete-modal').css('display', 'none');
         $("html,body").css("overflow", "auto");
@@ -9,7 +10,7 @@
         $('#delete-modal').hide();
     });
 
-    // close modal
+    // closes modal
     $('#close-button').click(function() {
         $("html,body").css("overflow", "auto"); // TODO
 
@@ -19,6 +20,7 @@
         enableEditModal();
     });
 
+    // clears edit-modal form (resets inputs, borders, help-texts)
     function clearForm() {
         document.getElementById('add-update-form').reset();
 
@@ -29,10 +31,12 @@
         $('.help-block').text('');
     }
 
+    // checks string on the name format
     function validateName(name) {
         return 0 < name.length && name.length <= 15 && !/^ +$/.test(name);
     }
 
+    // checks string on the name format and returns {valid, error-message}
     function nameValidation(name) {
         var result = { valid: false };
         if (name.length == 0) {
@@ -51,6 +55,7 @@
         return result;
     }
 
+    // checks string on the email format
     function validateEmail(email) {
         var symbols = '([\\w.-])+';
         var domain = '([a-zA-Z]){2,3}';
@@ -59,6 +64,7 @@
         return new RegExp(regexp).test(email);
     }
 
+    // checks string on the email format and returns {valid, error-message}
     function emailValidation(email) {
         // if (email == '') {
         //     return {
@@ -71,16 +77,19 @@
         };
     }
 
+    // checks string on the count format
     function validateCount(count) {
         var re = /^\d+$/;
         return count == '' || re.test(count);
     }
 
+    // checks string on the price format
     function validatePrice(price) {
         var re = /^[\d\.]+$/;
         return price == '' || re.test(price); // !isNaN()
     }
 
+    // checks string on the US currency format
     function validateFormattedPrice(formattedPrice) {
         // if (formattedPrice == '') {
         //     return true;
@@ -105,6 +114,7 @@
         // return re.test(formattedPrice);
     }
 
+    // adds validation to edit-modal inputs
     function addValidation() {
 
         // email validation
@@ -263,17 +273,19 @@
         });
     }
 
+    // gets unformatted price (string or number) and returns that formatted to US currency format
     function getFormattedPrice(unformattedPrice) {
         var parts = unformattedPrice.toString().split('.');
         var leftPart = '$' + reverseString(reverseString(parts[0]).match(/.{1,3}/g).join(','));
         return leftPart + (parts[1] ? '.' + parts[1].substr(0, 2) : '');
     }
 
+    // gets price formatted in US currency format and returns that unformatted 
     function getUnformattedPrice(formattedPrice) {
         return formattedPrice.replace(/[\,\$]/g, '');
     }
 
-    // add new product 
+    // add-new-product-button click handler
     $('#add-new-button').click(function() {
         // console.log('add-new-button pressed');
 
@@ -349,6 +361,7 @@
         $('#edit-modal').css('display', 'block');
     });
 
+    // 'Delivery option (empty, city, country)' change handler
     $('#delivery-type-select').change(function() {
         switch ($(this).val()) {
             case '':
@@ -368,12 +381,14 @@
         }
     });
 
+    // 'Select All' change handler
     $('#select-all-checkbox').change(function() {
         if ($(this).first().prop('checked')) {
             $('input[type=checkbox]').prop('checked', true);
         }
     });
 
+    // 'City checkbox' change handler
     $('input[type=checkbox]:not(#select-all-checkbox)').change(function() {
         var selectAllCheckbox = $('#select-all-checkbox');
         if (!selectAllCheckbox.prop('checked')) {
@@ -406,6 +421,7 @@
         }
     });
 
+    // returns table rows as array of { row-id, row-data }
     function getTableRows() {
         var trs = [];
         $('tr:has(td)').each(function() {
@@ -419,6 +435,7 @@
         return trs;
     }
 
+    // inserts rows to table from array of { row-id, row-data }
     function setTableRows(trs) {
         trs.forEach(function(tr) {
             $('tbody').append(tr.data);
@@ -510,6 +527,7 @@
         ascendingOrderOfSortingByPrice = !ascendingOrderOfSortingByPrice;
     });
 
+    // adds new product into products and table; adds event handlers to rows
     function addIntoTable(product) {
         // window.products.push(product);
         window.products[product.id] = product;
@@ -517,6 +535,7 @@
         addEventsTo(product);
     }
 
+    // adds new row into table
     function addRowIntoTable(product) {
         var newRow = $('<tr></tr>').html(
             '<td><a href="#" class="text-info">' + product.name + '</a><span class="badge">' + product.count + '</span></td>' +
@@ -535,6 +554,7 @@
         $('tbody').append(newRow);
     }
 
+    // updates table row with new-product by new-product-id
     function updateTableRow(newProduct) {
         var tr = $('#tr-' + newProduct.id);
         tr.find('a').text(newProduct.name);
@@ -542,6 +562,7 @@
         tr.find('td:nth-child(2)').text(getFormattedPrice(newProduct.price));
     }
 
+    // adds event handlers to row corresponding to product
     function addEventsTo(product) {
 
         $('#delete-button-' + product.id).click(function() {
@@ -723,6 +744,7 @@
         });
     }
 
+    // disable all inputs of edit-modal
     function disableEditModal() {
         $('#name').prop('disabled', true);
         $('#supplier-email').prop('disabled', true);
@@ -733,6 +755,7 @@
         $(':checkbox[name="city"]').prop('disabled', true);
     }
 
+    // enable all inputs of edit-modal
     function enableEditModal() {
         $('#name').prop('disabled', false);
         $('#supplier-email').prop('disabled', false);
@@ -743,6 +766,7 @@
         $(':checkbox[name="city"]').prop('disabled', false);
     }
 
+    // clears table body (without header (th-s))
     function clearTable() {
         var headerRow = $('tr').first().clone(true);
         var tbody = $('tbody');
@@ -750,6 +774,7 @@
         tbody.append(headerRow);
     }
 
+    // clears table and adds each product of window.products into table
     function showAllProducts() {
         // console.log('showing all products');
         // alert('showing all products');
@@ -762,7 +787,6 @@
         }
     }
 
+    // table initialization
     showAllProducts();
 });
-
-// TODO vertical lines on edit-modal

@@ -1,8 +1,11 @@
+// products storage
 window.products = {};
 
+// sorting order initialization
 var ascendingOrderOfSortingByName = true;
 var ascendingOrderOfSortingByPrice = true;
 
+// Product class
 function Product(name, supplierEmail, count, price, delivery) {
     this.id = Product.getNextId();
     this.name = name;
@@ -12,6 +15,7 @@ function Product(name, supplierEmail, count, price, delivery) {
     this.delivery = delivery;
 }
 
+// Product id generator
 Product.getNextId = function() {
     if (!Product._id) {
         Product._id = 0;
@@ -19,6 +23,7 @@ Product.getNextId = function() {
     return Product._id++;
 };
 
+// initial (demo) products
 var ps = [
     new Product('ass', 'abc@mail.ru', 4539, 20.8, { type: 'city', value: ['Саратов', 'Санкт-Петербург'] }),
     new Product('wwwww', 'zyx@gmail.com', 23, 3, { type: 'country', value: 'Япония' }),
@@ -42,9 +47,8 @@ var ps = [
     // new Product('Диваны 5', 'emperor@machulaz.em', 32954, '$0', { type: '' }),
     // new Product('', 'abc@mail.ru', 3, '', { type: '' })
 ];
+
+// add initial (demo) products
 ps.forEach(function(product) {
     window.products[product.id] = product;
 });
-
-// window.products.push(new Product('2Нефть', 'emperor@machulaz.em', 3, 999, { type: '' }));
-// window.products.push(new Product('1Газ 11', 'emperor@machulaz.em', 57, 1234567, { type: '' }));
