@@ -91,9 +91,9 @@ a {
     transform: rotate(180deg) translateY(0px);
 }
 
-.input-highlighting {
-    border: 1px solid red !important;
-    box-shadow: none !important;
+.row .input-highlighting {
+    border: 1px solid red;
+    box-shadow: none;
 }
 
 .help-block {

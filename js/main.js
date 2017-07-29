@@ -1,29 +1,59 @@
 ﻿$(document).ready(function() {
 
     // 'NO' button click handler
-    $('#no-button').click(function() {
-        $("html,body").css("overflow", "auto");
+    $('#no-button').on('click', function() {
+        $('html, body').css('overflow', 'auto');
 
         $('#delete-modal').hide();
     });
 
     // closes modal
-    $('#close-button').click(function() {
-        $("html,body").css("overflow", "auto"); // TODO
+    $('#close-button').on('click', function() {
+        $('html, body').css('overflow', 'auto'); // TODO
 
-        $('#edit-modal').css('display', 'none');
-        enableEditModal();
+        $('#edit-modal').hide();
+        // enableEditModal();
     });
 
     // clears edit-modal form (resets inputs, borders, help-texts)
     function clearForm() {
         document.getElementById('add-update-form').reset();
 
+        enableEditModal();
+
         $('#name').removeClass('input-highlighting');
         $('#supplier-email').removeClass('input-highlighting');
         $('#count').removeClass('input-highlighting');
 
         $('.help-block').text('');
+
+        $('#delivery-country-radio-group').addClass('invisible');
+        $('#delivery-city-checkbox-group').addClass('invisible');
+    }
+
+    function fillForm(product) {
+        $('#name').val(product.name);
+        $('#supplier-email').val(product.supplierEmail);
+        $('#count').val(product.count);
+        $('#price').val(getFormattedPrice(product.price));
+        var delivery = product.delivery;
+        $('#delivery-type-select').val(delivery.type);
+        switch (delivery.type) {
+            case '':
+                break;
+            case 'country':
+                $(':radio[name="country"][value="' + delivery.value + '"]').prop('checked', true);
+                $('#delivery-country-radio-group').removeClass('invisible');
+                break;
+            case 'city':
+                delivery.value.forEach(function(city) {
+                    $(':checkbox[name="city"]:not(#select-all-checkbox)[value="' + city + '"]').prop('checked', true);
+                });
+                $('#delivery-city-checkbox-group').removeClass('invisible');
+                break;
+            default:
+                throw new Error('Unknown delivery type: ' + delivery.type);
+        }
     }
 
     // checks string on the name format
@@ -74,9 +104,10 @@
     }
 
     // checks string on the price format
-    function validatePrice(price) {
-        var re = /^[\d\.]+$/;
-        return price == '' || re.test(price); // !isNaN()
+    function validateUnformattedPrice(unformattedPrice) {
+        // var re = /^[\d\.]+$/;
+        // return unformattedPrice == '' || re.test(unformattedPrice); // !isNaN()
+        return isNumeric(unformattedPrice);
     }
 
     // checks string on the US currency format
@@ -180,7 +211,7 @@
         $('#price').off();
         $('#price').on('paste', function(e) {
             var pasteData = e.originalEvent.clipboardData.getData('Text');
-            return validatePrice(pasteData);
+            return /^[\d\.]+$/.test(pasteData);
         });
 
         $('#price').keypress(function(e) {
@@ -193,24 +224,32 @@
                 return true;
             }
 
-            return validatePrice(key);
+            // return validateUnformattedPrice(key);
+            return /^[\d\.]+$/.test(key);
             // TODO add isNaN on input.val()???
         });
 
         $('#price').focus(function() {
-            var price = $(this).val();
-            if (price) {
+            var formattedPrice = $(this).val();
+            if (formattedPrice) {
                 // delete all commas and dollar sign
-                $(this).val(getUnformattedPrice(price));
+                $(this).val(getUnformattedPrice(formattedPrice));
             }
             // console.log('caret position: ', $(this).selectionStart);
         });
         $('#price').blur(function() {
-            var price = $(this).val();
-            if (!price) {
-                return;
+            var unformattedPrice = $(this).val().toString();
+            if (unformattedPrice.length == 0) {
+                // return;
             }
-            $(this).val(getFormattedPrice($(this).val()));
+            // 000786 00.789
+            unformattedPrice = unformattedPrice.replace(/^(0){1,}/g, '');
+            if (unformattedPrice.length == 0 || unformattedPrice.startsWith('.')) {
+                // .123456789 add 0
+                unformattedPrice = '0' + unformattedPrice;
+            }
+
+            $(this).val(getFormattedPrice(+unformattedPrice));
         });
     }
 
@@ -227,21 +266,17 @@
     }
 
     // add-new-product-button click handler
-    $('#add-new-button').click(function() {
+    $('#add-new-button').on('click', function() {
 
-        $("html,body").css("overflow", "hidden");
+        $('html, body').css('overflow', 'hidden');
 
         // clearing form
         clearForm();
 
         $('#add-update-button').text('Add');
 
-        $('#delivery-country-radio-group').addClass('invisible');
-        $('#delivery-city-checkbox-group').addClass('invisible');
-
         // making event handler for add-button
-        $('#add-update-button').off('click');
-        $('#add-update-button').click(function() {
+        $('#add-update-button').off('click').on('click', function() {
             var valid = validateName($('#name').val()) &&
                 emailValidation($('#supplier-email').val()).valid &&
                 validateCount($('#count').val()) &&
@@ -270,9 +305,9 @@
 
                 addIntoTable(new Product($('#name').val(), $('#supplier-email').val(), $('#count').val(), price, delivery));
 
-                $("html,body").css("overflow", "auto");
+                $('html, body').css('overflow', 'auto');
 
-                $('#edit-modal').css('display', 'none'); // hide()
+                $('#edit-modal').hide();
             } else {
                 // no valid
                 if (!validateEmail($('#supplier-email').val())) {
@@ -286,7 +321,7 @@
 
         addValidation();
 
-        $('#edit-modal').css('display', 'block');
+        $('#edit-modal').show();
     });
 
     // 'Delivery option (empty, city, country)' change handler
@@ -331,7 +366,7 @@
     });
 
     // search by name
-    $('#search-button').click(function(e) {
+    $('#search-button').on('click', function(e) {
         e.preventDefault();
 
         var filterString = $('input[id="search"]').last().val().toLowerCase();
@@ -341,10 +376,10 @@
         for (var id in window.products) {
             var product = products[id];
             if (~product.name.toLowerCase().indexOf(filterString)) {
-                addRowIntoTable(product);
-                addEventsTo(product);
+                addRowIntoTable(product); // TODO product.row
             }
         }
+        addEventListenersToAllRows();
     });
 
     // returns table rows as array of { row-id, row-data }
@@ -354,7 +389,7 @@
             var tr = $(this).clone(true);
             // 'tr-id' => 'id'
             trs.push({
-                id: tr.attr('id').substr(3),
+                id: tr.data('product-id'),
                 data: tr
             });
         });
@@ -365,13 +400,19 @@
     function setTableRows(trs) {
         trs.forEach(function(tr) {
             $('tbody').append(tr.data);
-            // addEventsTo(ps[tr.id]);
         });
     }
 
-    // sorting by name
-    $('tr>th:nth-child(1)').click(function() {
-        // table rows with their ids
+    // row sorting (by name and by price)
+    $('th[data-column-name]').on('click', function() {
+        var columnName = $(this).data().columnName;
+
+        // exclude actions column
+        if (columnName == 'actions') {
+            return;
+        }
+
+        // table rows with their ids // array of { id: row-id, data: row-data }
         var trs = getTableRows();
 
         // sorting trs
@@ -380,17 +421,17 @@
             var f_id = f_tr.id;
             var s_id = s_tr.id;
 
-            if (ps[f_id].name < ps[s_id].name) {
+            if (ps[f_id][columnName] < ps[s_id][columnName]) {
                 return -1;
             }
-            if (ps[f_id].name > ps[s_id].name) {
+            if (ps[f_id][columnName] > ps[s_id][columnName]) {
                 return 1;
             }
             return 0;
         });
 
         // if descending order then reverse trs
-        if (!ascendingOrderOfSortingByName) {
+        if (!ascendingOrderOfSortingBy[columnName]) {
             trs.reverse();
         }
 
@@ -400,149 +441,87 @@
         // add rows to table body
         setTableRows(trs);
 
-        $('tr>th:nth-child(1)').children().last().toggleClass('rotate180deg');
+        // toggle sorting order arrow direction
+        $('th[data-column-name="' + columnName + '"]').children().last().toggleClass('rotate180deg');
 
-        // change sorting order
-        ascendingOrderOfSortingByName = !ascendingOrderOfSortingByName;
-    });
-
-    // sorting by price
-    $('tr>th:nth-child(2)').click(function() {
-        // table rows with their ids
-        var trs = getTableRows();
-
-        // sorting trs
-        var ps = window.products;
-        trs.sort(function(f_tr, s_tr) {
-            var f_id = f_tr.id;
-            var s_id = s_tr.id;
-
-            if (ps[f_id].price < ps[s_id].price) {
-                return -1;
-            }
-            if (ps[f_id].price > ps[s_id].price) {
-                return 1;
-            }
-            return 0;
-        });
-
-        // if descending order then reverse trs
-        if (!ascendingOrderOfSortingByPrice) {
-            trs.reverse();
-        }
-
-        // clear table body
-        clearTable();
-
-        // add rows to table body
-        setTableRows(trs);
-
-        $('tr>th:nth-child(2)').children().last().toggleClass('rotate180deg');
-
-        // change sorting order
-        ascendingOrderOfSortingByPrice = !ascendingOrderOfSortingByPrice;
+        // toggle sorting order
+        ascendingOrderOfSortingBy[columnName] = !ascendingOrderOfSortingBy[columnName];
     });
 
     // adds new product into products and table; adds event handlers to rows
     function addIntoTable(product) {
         window.products[product.id] = product;
         addRowIntoTable(product);
-        addEventsTo(product);
+        addEventListenersToAllRows();
     }
 
     // adds new row into table
     function addRowIntoTable(product) {
-        var newRow = $('<tr></tr>').html(
-            '<td><a href="#" class="text-info">' + product.name + '</a><span class="badge">' + product.count + '</span></td>' +
-            '<td>' + getFormattedPrice(product.price) + '</td>' +
-            '<td>' +
-            '<div class="row">' +
-            '<div class="col-md-2 col-md-offset-4 col-xs-3 col-xs-offset-3">' +
-            '<button id="edit-button-' + product.id + '" class="btn btn-default">Edit</button>' +
-            '</div>' +
-            '<div class="col-md-2 col-xs-3">' +
-            '<button id="delete-button-' + product.id + '" class="btn btn-default">Delete</button>' +
-            '</div>' +
-            '</div>' +
-            '</td>');
-        newRow.attr('id', 'tr-' + product.id);
+        var newRow = $('<tr></tr>').html(EMPTY_ROW_HTML);
+
+        newRow.attr('data-product-id', product.id); // because of tr selecting in updateTableRow | maybe Product.prototype.row???
+        // newRow.data('product-id', product.id);
+
         $('tbody').append(newRow);
+
+        updateTableRow(product);
     }
 
     // updates table row with new-product by new-product-id
     function updateTableRow(newProduct) {
-        var tr = $('#tr-' + newProduct.id);
+        var tr = $('[data-product-id="' + newProduct.id + '"]');
         tr.find('a').text(newProduct.name);
         tr.find('span.badge').text(newProduct.count);
-        tr.find('td:nth-child(2)').text(getFormattedPrice(newProduct.price));
+        tr.find('[data-column-name="price"]').text(getFormattedPrice(newProduct.price));
     }
 
-    // adds event handlers to row corresponding to product
-    function addEventsTo(product) {
+    function addEventListenersToAllRows() {
+        // delete button
+        $('[data-click-event="delete"]').off('click').on('click', function() {
+            console.log('delete clicked');
 
-        $('#delete-button-' + product.id).click(function() {
-            $("html, body").css("overflow", "hidden");
+            $('html, body').css('overflow', 'hidden');
+
+            var row = $(this).parents('tr');
+            var product = window.products[row.data('product-id')];
 
             // making delete-modal text
             $('#delete-modal').find('h4').html('Вы действительно хотите<br>удалить "' + product.name + '"?');
 
-            // deleting all event handlers
-            $('#yes-button').off('click');
-
             // add event handler
-            $('#yes-button').click(function() {
+            $('#yes-button').off('click').on('click', function() {
                 // deleting from tbody
-                // $('tr:has(button[id="delete-button-' + id + '"])').remove();
-                $('tr[id="tr-' + product.id + '"]').remove();
+                row.remove();
 
                 // deleting the product
                 delete window.products[product.id];
 
-                $('#delete-modal').css('display', 'none'); // hide()
+                $('html, body').css('overflow', 'auto');
+
+                $('#delete-modal').hide();
             });
 
-            $('#delete-modal').css('display', 'block'); // show()
+            $('#delete-modal').show(); // .css('display', 'block');
         });
 
-        $('#edit-button-' + product.id).click(function() {
-            $("html,body").css("overflow", "hidden");
+        // edit button
+        $('[data-click-event="edit"]').off('click').on('click', function() {
+            console.log('edit clicked');
+
+            $('html, body').css('overflow', 'hidden');
+
+            var product = window.products[$(this).parents('tr').data('product-id')];
 
             // reseting form
             clearForm();
 
             $('#add-update-button').text('Update');
 
-            $('#delivery-country-radio-group').addClass('invisible');
-            $('#delivery-city-checkbox-group').addClass('invisible');
-
             // fill form fields
-            $('#name').val(product.name);
-            $('#supplier-email').val(product.supplierEmail);
-            $('#count').val(product.count);
-            $('#price').val(getFormattedPrice(product.price));
-            var delivery = product.delivery;
-            $('#delivery-type-select').val(delivery.type);
-            switch (delivery.type) {
-                case '':
-                    break;
-                case 'country':
-                    // $(':radio[name=country]').filter('[value="' + delivery.value + '"]').prop('checked', true);
-                    $(':radio[name=country][value="' + delivery.value + '"]').prop('checked', true);
-                    $('#delivery-country-radio-group').removeClass('invisible');
-                    break;
-                case 'city':
-                    delivery.value.forEach(function(city) {
-                        $(':checkbox[name="city"]:not(#select-all-checkbox)[value="' + city + '"]').prop('checked', true);
-                    });
-                    $('#delivery-city-checkbox-group').removeClass('invisible');
-                    break;
-                default:
-                    throw new Error('Unknown delivery type: ' + delivery.type);
-            }
+            fillForm(product);
 
             // making event handler for update-button
-            $('#add-update-button').off('click');
-            $('#add-update-button').click(function() {
+            $('#add-update-button').off('click').on('click', function() {
                 var valid = validateName($('#name').val()) &&
                     emailValidation($('#supplier-email').val()).valid &&
                     validateCount($('#count').val()) &&
@@ -569,7 +548,7 @@
 
                     var price = +getUnformattedPrice($('#price').val());
 
-                    var newProduct = {
+                    var newProductData = {
                         id: product.id,
                         name: $('#name').val(),
                         supplierEmail: $('#supplier-email').val(),
@@ -578,16 +557,14 @@
                         delivery: delivery
                     };
 
-                    var oldProduct = window.products[newProduct.id];
-                    for (var key in newProduct) {
-                        oldProduct[key] = newProduct[key];
-                    }
+                    window.products[newProductData.id].update(newProductData);
+
                     // update table row
-                    updateTableRow(newProduct);
+                    updateTableRow(newProductData);
 
-                    $("html,body").css("overflow", "auto");
+                    $('html, body').css('overflow', 'auto');
 
-                    $('#edit-modal').css('display', 'none');
+                    $('#edit-modal').hide();
                 } else {
                     // no valid
                     if (!validateEmail($('#supplier-email').val())) {
@@ -602,77 +579,56 @@
             addValidation();
 
             // show modal dialog
-            $('#edit-modal').css('display', 'block');
+            $('#edit-modal').show();
         });
 
-        $('#tr-' + product.id + ' a').click(function() {
+        // view product info link
+        $('[data-click-event="view"]').off('click').on('click', function(e) {
+            console.log('view clicked');
+
+            // prevent scroll to the # anchor (top)
+            e.preventDefault();
+
+            $('html, body').css('overflow', 'hidden');
+
+            var product = window.products[$(this).parents('tr').data('product-id')];
+
             // reseting form
             clearForm();
 
             $('#add-update-button').text('OK');
 
-            $('#delivery-country-radio-group').addClass('invisible');
-            $('#delivery-city-checkbox-group').addClass('invisible');
-
             // fill form fields
-            $('#name').val(product.name);
-            $('#supplier-email').val(product.supplierEmail);
-            $('#count').val(product.count);
-            $('#price').val(getFormattedPrice(product.price));
-            var delivery = product.delivery;
-            $('#delivery-type-select').val(delivery.type);
-            switch (delivery.type) {
-                case '':
-                    break;
-                case 'country':
-                    // $(':radio[name=country]').filter('[value="' + delivery.value + '"]').prop('checked', true);
-                    $(':radio[name="country"][value="' + delivery.value + '"]').prop('checked', true);
-                    $('#delivery-country-radio-group').removeClass('invisible');
-                    break;
-                case 'city':
-                    delivery.value.forEach(function(city) {
-                        $(':checkbox[name="city"]:not(#select-all-checkbox)[value="' + city + '"]').prop('checked', true);
-                    });
-                    $('#delivery-city-checkbox-group').removeClass('invisible');
-                    break;
-                default:
-                    throw new Error('Unknown delivery type: ' + delivery.type);
-            }
+            fillForm(product);
 
             // making event handler for update-button
-            $('#add-update-button').off('click');
-            $('#add-update-button').click(function() {
-                $('#edit-modal').css('display', 'none');
+            $('#add-update-button').off('click').on('click', function() {
+                $('html, body').css('overflow', 'auto');
+                $('#edit-modal').hide();
             });
 
             // disable all 
             disableEditModal();
 
             // show modal dialog
-            $('#edit-modal').css('display', 'block');
+            $('#edit-modal').show();
         });
     }
 
     // disable all inputs of edit-modal
     function disableEditModal() {
-        $('#name').prop('disabled', true);
-        $('#supplier-email').prop('disabled', true);
-        $('#count').prop('disabled', true);
-        $('#price').prop('disabled', true);
-        $('#delivery-type-select').prop('disabled', true);
-        $(':radio[name="country"]').prop('disabled', true);
-        $(':checkbox[name="city"]').prop('disabled', true);
+        var selector = ['name', 'supplier-email', 'count', 'price', 'delivery-type', 'country', 'city'].map(function(name) {
+            return '[name="' + name + '"]';
+        }).join(',');
+
+        $(selector).prop('disabled', true);
+
+        // $('[name="name"], [name="supplier-email"], [name="count"], [name="price"], [name="delivery-type"], [name="country"], [name="city"]').prop('disabled', true);
     }
 
     // enable all inputs of edit-modal
     function enableEditModal() {
-        $('#name').prop('disabled', false);
-        $('#supplier-email').prop('disabled', false);
-        $('#count').prop('disabled', false);
-        $('#price').prop('disabled', false);
-        $('#delivery-type-select').prop('disabled', false);
-        $(':radio[name="country"]').prop('disabled', false);
-        $(':checkbox[name="city"]').prop('disabled', false);
+        $('[name="name"], [name="supplier-email"], [name="count"], [name="price"], [name="delivery-type"], [name="country"], [name="city"]').prop('disabled', false);
     }
 
     // clears table body (without header (th-s))
@@ -690,8 +646,9 @@
         for (var id in window.products) {
             var product = products[id];
             addRowIntoTable(product);
-            addEventsTo(product);
         }
+
+        addEventListenersToAllRows();
     }
 
     // table initialization

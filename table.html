@@ -3,8 +3,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width; initial-scale=1.0">
-    <!--<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>EPAM jQUERY TABLE</title>
     <!--include bootstrap-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -21,7 +21,7 @@
         <form action="" class="form-inline " style="margin-top: 20px;">
             <div class="form-group search-form-group" style="">
                 <label class="sr-only col-sm-0" for="search">Search</label>
-                <input id="search" type="search" class="form-control" placeholder="Фильтр по подстроке в имени товара">
+                <input name="search" id="search" type="search" class="form-control" placeholder="Фильтр по подстроке в имени товара">
             </div>
             <button type="submit" class="btn" id="search-button">Искать</button>
             <button type="button" class="btn pull-right" id="add-new-button">Add new</button>
@@ -30,21 +30,21 @@
         <!--Table-->
         <table class="table table-bordered text-center" style="margin-top: 20px;">
             <tr>
-                <th>
+                <th data-column-name="name">
                     <!--Name-->
                     <div style="display: table-cell; width: 100%; text-align:center; vertical-align:middle;">Name</div>
                     <div style="display: table-cell;">
                         <span style="font-size: 2.3em;">&#9661;</span>
                     </div>
                 </th>
-                <th>
+                <th data-column-name="price">
                     <!--Price-->
                     <div style="display: table-cell; width: 100%; text-align:center; vertical-align:middle;">Price</div>
                     <div style="display: table-cell;">
                         <span style="font-size: 2.3em;">&#9661;</span>
                     </div>
                 </th>
-                <th>Actions</th>
+                <th data-column-name="actions">Actions</th>
             </tr>
         </table>
 
@@ -83,7 +83,7 @@
                         <label for="name">Name:</label>
                         <div class="row">
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" id="name">
+                                <input name="name" type="text" class="form-control" id="name">
                             </div>
                             <div class="col-sm-4">
                                 <!--delete padding-left: 0;-->
@@ -100,7 +100,7 @@
 
                         <div class="row">
                             <div class="col-sm-7">
-                                <input type="email" class="form-control" id="supplier-email" aria-describedby="email-help-text">
+                                <input name="supplier-email" type="email" class="form-control" id="supplier-email" aria-describedby="email-help-text">
                             </div>
                             <div class="col-sm-4">
                                 <!--<span class="help-block" id="supplier-email-help-block">&#9679; Incorrect email</span>-->
@@ -117,7 +117,7 @@
                         <label for="count">Count:</label>
                         <div class="row">
                             <div class="col-sm-4">
-                                <input type="text" class="form-control" id="count">
+                                <input name="count" type="text" class="form-control" id="count">
                             </div>
                             <div class="col-sm-7">
                                 <span class="help-block" id="count-help-block">&#9679; Несоответствие формату e-mail</span>
@@ -130,7 +130,7 @@
                         <label for="price">Price:</label>
                         <div class="row">
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" id="price">
+                                <input name="price" type="text" class="form-control" id="price">
                             </div>
                         </div>
                     </div>
@@ -142,7 +142,7 @@
 
                         <!--Delivery option-->
                         <div class="col-sm-4">
-                            <select class="form-control" id="delivery-type-select">
+                            <select name="delivery-type" class="form-control" id="delivery-type-select">
                                 <option value=""></option>
                                 <option value="country">Страна</option>
                                 <option value="city">Город</option>
