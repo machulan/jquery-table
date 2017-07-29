@@ -105,8 +105,6 @@
 
     // checks string on the price format
     function validateUnformattedPrice(unformattedPrice) {
-        // var re = /^[\d\.]+$/;
-        // return unformattedPrice == '' || re.test(unformattedPrice); // !isNaN()
         return isNumeric(unformattedPrice);
     }
 
@@ -122,8 +120,7 @@
 
     // adds validation to edit-modal inputs
     function addValidation() {
-
-        // email validation
+        // name validation
         // on focus
         var firstNameFocus = true;
         $('#name').off();
@@ -143,7 +140,6 @@
             }
         });
         // on blur
-
         $('#name').blur(function() {
             var validation = nameValidation($(this).val());
             if (!validation.valid) {
@@ -193,7 +189,7 @@
             var pasteData = e.originalEvent.clipboardData.getData('Text');
             return validateCount(pasteData);
         });
-
+        // on keypress
         $('#count').keypress(function(e) {
             var e = e || window.event;
             var keyCode = e.keyCode || e.which;
@@ -213,7 +209,7 @@
             var pasteData = e.originalEvent.clipboardData.getData('Text');
             return /^[\d\.]+$/.test(pasteData);
         });
-
+        // on keypress
         $('#price').keypress(function(e) {
             var e = e || window.event;
             var keyCode = e.keyCode || e.which;
@@ -228,7 +224,7 @@
             return /^[\d\.]+$/.test(key);
             // TODO add isNaN on input.val()???
         });
-
+        // on focus
         $('#price').focus(function() {
             var formattedPrice = $(this).val();
             if (formattedPrice) {
@@ -237,6 +233,7 @@
             }
             // console.log('caret position: ', $(this).selectionStart);
         });
+        // on blur
         $('#price').blur(function() {
             var unformattedPrice = $(this).val().toString();
             if (unformattedPrice.length == 0) {
@@ -379,29 +376,7 @@
                 addRowIntoTable(product); // TODO product.row
             }
         }
-        addEventListenersToAllRows();
     });
-
-    // returns table rows as array of { row-id, row-data }
-    function getTableRows() {
-        var trs = [];
-        $('tr:has(td)').each(function() {
-            var tr = $(this).clone(true);
-            // 'tr-id' => 'id'
-            trs.push({
-                id: tr.data('product-id'),
-                data: tr
-            });
-        });
-        return trs;
-    }
-
-    // inserts rows to table from array of { row-id, row-data }
-    function setTableRows(trs) {
-        trs.forEach(function(tr) {
-            $('tbody').append(tr.data);
-        });
-    }
 
     // row sorting (by name and by price)
     $('th[data-column-name]').on('click', function() {
@@ -448,11 +423,163 @@
         ascendingOrderOfSortingBy[columnName] = !ascendingOrderOfSortingBy[columnName];
     });
 
+    // 'Delete' button click handler
+    $(document).on('click', '[data-click-event="delete"]', function() {
+        $('html, body').css('overflow', 'hidden');
+
+        var row = $(this).parents('tr');
+        var product = window.products[row.data('product-id')];
+
+        // making delete-modal text
+        $('#delete-modal').find('h4').html('Вы действительно хотите<br>удалить "' + product.name + '"?');
+
+        // add event handler
+        $('#yes-button').off('click').on('click', function() {
+            // deleting from tbody
+            row.remove();
+
+            // deleting the product
+            delete window.products[product.id];
+
+            $('html, body').css('overflow', 'auto');
+
+            $('#delete-modal').hide();
+        });
+
+        $('#delete-modal').show(); // .css('display', 'block');
+    });
+
+    // 'Edit' button click handler
+    $(document).on('click', '[data-click-event="edit"]', function() {
+        $('html, body').css('overflow', 'hidden');
+
+        var product = window.products[$(this).parents('tr').data('product-id')];
+
+        // reseting form
+        clearForm();
+
+        $('#add-update-button').text('Update');
+
+        // fill form fields
+        fillForm(product);
+
+        // making event handler for update-button
+        $('#add-update-button').off('click').on('click', function() {
+            var valid = validateName($('#name').val()) &&
+                emailValidation($('#supplier-email').val()).valid &&
+                validateCount($('#count').val()) &&
+                validateFormattedPrice($('#price').val());
+
+            if (valid) {
+                var delivery = { type: $('#delivery-type-select').val() };
+                switch (delivery.type) {
+                    case '':
+                        break;
+                    case 'country':
+                        delivery.value = $('input[type=radio]:checked').val();
+                        break;
+                    case 'city':
+                        var chechboxValues = [];
+                        $('input[type=checkbox]:not(#select-all-checkbox):checked').each(function() {
+                            chechboxValues.push($(this).val());
+                        });
+                        delivery.value = chechboxValues;
+                        break;
+                    default:
+                        throw new Error('Unknown delivery type: ' + delivery.type);
+                }
+
+                var price = +getUnformattedPrice($('#price').val());
+
+                var newProductData = {
+                    id: product.id,
+                    name: $('#name').val(),
+                    supplierEmail: $('#supplier-email').val(),
+                    count: $('#count').val(),
+                    price: price,
+                    delivery: delivery
+                };
+
+                window.products[newProductData.id].update(newProductData);
+
+                // update table row
+                updateTableRow(newProductData);
+
+                $('html, body').css('overflow', 'auto');
+
+                $('#edit-modal').hide();
+            } else {
+                // no valid
+                if (!validateEmail($('#supplier-email').val())) {
+                    $('#supplier-email').focus().blur().focus();
+                }
+                if (!validateName($('#name').val())) {
+                    $('#name').focus().blur().focus();
+                }
+            }
+        });
+
+        addValidation();
+
+        // show modal dialog
+        $('#edit-modal').show();
+    });
+
+    // 'View' product info link click handler
+    $(document).on('click', '[data-click-event="view"]', function(e) {
+        // prevent scroll to the # anchor (top)
+        e.preventDefault();
+
+        $('html, body').css('overflow', 'hidden');
+
+        var product = window.products[$(this).parents('tr').data('product-id')];
+
+        // reseting form
+        clearForm();
+
+        $('#add-update-button').text('OK');
+
+        // fill form fields
+        fillForm(product);
+
+        // making event handler for update-button
+        $('#add-update-button').off('click').on('click', function() {
+            $('html, body').css('overflow', 'auto');
+            $('#edit-modal').hide();
+        });
+
+        // disable all 
+        disableEditModal();
+
+        // show modal dialog
+        $('#edit-modal').show();
+    });
+
+    // returns table rows as array of { row-id, row-data }
+    function getTableRows() {
+        var trs = [];
+        $('tr:has(td)').each(function() {
+            var tr = $(this).clone(true);
+            // 'tr-id' => 'id'
+            trs.push({
+                id: tr.data('product-id'),
+                data: tr
+            });
+        });
+        return trs;
+    }
+
+    // inserts rows to table from array of { row-id, row-data }
+    function setTableRows(trs) {
+        trs.forEach(function(tr) {
+            $('tbody').append(tr.data);
+        });
+    }
+
     // adds new product into products and table; adds event handlers to rows
     function addIntoTable(product) {
         window.products[product.id] = product;
         addRowIntoTable(product);
-        addEventListenersToAllRows();
     }
 
     // adds new row into table
@@ -475,155 +602,15 @@
         tr.find('[data-column-name="price"]').text(getFormattedPrice(newProduct.price));
     }
 
-    function addEventListenersToAllRows() {
-        // delete button
-        $('[data-click-event="delete"]').off('click').on('click', function() {
-            console.log('delete clicked');
-
-            $('html, body').css('overflow', 'hidden');
-
-            var row = $(this).parents('tr');
-            var product = window.products[row.data('product-id')];
-
-            // making delete-modal text
-            $('#delete-modal').find('h4').html('Вы действительно хотите<br>удалить "' + product.name + '"?');
-
-            // add event handler
-            $('#yes-button').off('click').on('click', function() {
-                // deleting from tbody
-                row.remove();
-
-                // deleting the product
-                delete window.products[product.id];
-
-                $('html, body').css('overflow', 'auto');
-
-                $('#delete-modal').hide();
-            });
-
-            $('#delete-modal').show(); // .css('display', 'block');
-        });
-
-        // edit button
-        $('[data-click-event="edit"]').off('click').on('click', function() {
-            console.log('edit clicked');
-
-            $('html, body').css('overflow', 'hidden');
-
-            var product = window.products[$(this).parents('tr').data('product-id')];
-
-            // reseting form
-            clearForm();
-
-            $('#add-update-button').text('Update');
-
-            // fill form fields
-            fillForm(product);
-
-            // making event handler for update-button
-            $('#add-update-button').off('click').on('click', function() {
-                var valid = validateName($('#name').val()) &&
-                    emailValidation($('#supplier-email').val()).valid &&
-                    validateCount($('#count').val()) &&
-                    validateFormattedPrice($('#price').val());
-
-                if (valid) {
-                    var delivery = { type: $('#delivery-type-select').val() };
-                    switch (delivery.type) {
-                        case '':
-                            break;
-                        case 'country':
-                            delivery.value = $('input[type=radio]:checked').val();
-                            break;
-                        case 'city':
-                            var chechboxValues = [];
-                            $('input[type=checkbox]:not(#select-all-checkbox):checked').each(function() {
-                                chechboxValues.push($(this).val());
-                            });
-                            delivery.value = chechboxValues;
-                            break;
-                        default:
-                            throw new Error('Unknown delivery type: ' + delivery.type);
-                    }
-
-                    var price = +getUnformattedPrice($('#price').val());
-
-                    var newProductData = {
-                        id: product.id,
-                        name: $('#name').val(),
-                        supplierEmail: $('#supplier-email').val(),
-                        count: $('#count').val(),
-                        price: price,
-                        delivery: delivery
-                    };
-
-                    window.products[newProductData.id].update(newProductData);
-
-                    // update table row
-                    updateTableRow(newProductData);
-
-                    $('html, body').css('overflow', 'auto');
-
-                    $('#edit-modal').hide();
-                } else {
-                    // no valid
-                    if (!validateEmail($('#supplier-email').val())) {
-                        $('#supplier-email').focus().blur().focus();
-                    }
-                    if (!validateName($('#name').val())) {
-                        $('#name').focus().blur().focus();
-                    }
-                }
-            });
-
-            addValidation();
-
-            // show modal dialog
-            $('#edit-modal').show();
-        });
-
-        // view product info link
-        $('[data-click-event="view"]').off('click').on('click', function(e) {
-            console.log('view clicked');
-
-            // prevent scroll to the # anchor (top)
-            e.preventDefault();
-
-            $('html, body').css('overflow', 'hidden');
-
-            var product = window.products[$(this).parents('tr').data('product-id')];
-
-            // reseting form
-            clearForm();
-
-            $('#add-update-button').text('OK');
-
-            // fill form fields
-            fillForm(product);
-
-            // making event handler for update-button
-            $('#add-update-button').off('click').on('click', function() {
-                $('html, body').css('overflow', 'auto');
-                $('#edit-modal').hide();
-            });
-
-            // disable all 
-            disableEditModal();
-
-            // show modal dialog
-            $('#edit-modal').show();
-        });
-    }
-
     // disable all inputs of edit-modal
     function disableEditModal() {
-        var selector = ['name', 'supplier-email', 'count', 'price', 'delivery-type', 'country', 'city'].map(function(name) {
-            return '[name="' + name + '"]';
-        }).join(',');
+        // var selector = ['name', 'supplier-email', 'count', 'price', 'delivery-type', 'country', 'city'].map(function(name) {
+        //     return '[name="' + name + '"]';
+        // }).join(',');
 
-        $(selector).prop('disabled', true);
+        // $(selector).prop('disabled', true);
 
-        // $('[name="name"], [name="supplier-email"], [name="count"], [name="price"], [name="delivery-type"], [name="country"], [name="city"]').prop('disabled', true);
+        $('[name="name"], [name="supplier-email"], [name="count"], [name="price"], [name="delivery-type"], [name="country"], [name="city"]').prop('disabled', true);
     }
 
     // enable all inputs of edit-modal
@@ -647,14 +634,15 @@
             var product = products[id];
             addRowIntoTable(product);
         }
-
-        addEventListenersToAllRows();
     }
 
     // table initialization
     showAllProducts();
 });
 
+// TODO if delivery.type == 'city' and there are not any selected checkboxes after closing set '' as delivery.type 
+// TODO price input paste handler (try to paste '$123' => 'NaN')
+// TODO think over price input emptiness ???
 // TODO fix caret position changing in price input (and maybe in count input)
 // TODO delete shift when opening modal // LOOK AT myinstaspace.ru
 
