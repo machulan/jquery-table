@@ -16,6 +16,7 @@ You can:
 * count
 * price
 * delivery type
+  * none
   * country
   * city
 
